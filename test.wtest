@@ -1,0 +1,37 @@
+import cosas.*
+import camion.*
+
+describe "Test del Camion Transporte" {
+
+    test "Carga y Descarga con validación de errores" {
+        camion.cargar(bumblebee)
+        assert.equals(#{bumblebee}, camion.cosas())
+        assert.throwsException({ camion.cargar(bumblebee) }) // Ya cargado
+        camion.descargar(bumblebee)
+        assert.throwsException({ camion.descargar(bumblebee) }) // No está
+        
+    }
+
+    test "Peso total y exceso de peso" {
+
+        paqueteDeLadrillos.cantidad(1000) // Pesa 2000kg
+        camion.cargar(paqueteDeLadrillos) 
+        // Tara 1000 + Ladrillos 2000 = 3000. Excede los 2500.
+        assert.that(camion.hayExcesoDePeso())
+
+    }
+
+    test "Efecto de accidente en Bumblebee" {
+        bumblebee.transformarEnAuto()
+        camion.cargar(bumblebee)
+        camion.sufrirAccidente()
+        assert.equals(30, bumblebee.nivelPeligrosidad()) // Pasó a Robot
+    }
+
+    test "Transporte exitoso por Ruta 9" {
+        camion.cargar(knightRider) // Peligro 10 (Pasa nivel 20)
+        camion.transportar(almacen, ruta9)
+        assert.that(camion.cosas().isEmpty())
+        assert.that(almacen.cosas().contains(knightRider))
+    }
+}
